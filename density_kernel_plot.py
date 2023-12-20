@@ -206,9 +206,9 @@ def plot_survey_area(
 
 # load the data if its not already a pickle file for it
 zoom_in = 1
-load_data = 0
-if load_data == 1:
-    filename = r"C:\Users\kdo000\Dropbox\post_doc\Marie_project\data\SB_flare_data\CAGE_16_4_Merged_Manuel.xlsx"
+load_data_trigger = 1
+if load_data_trigger == 1:
+    filename = r"F:\ESP3_OK\edited_flares\CAGE_20_1_flow_rates_mat_n_xlsx_files\CAGE_20_1_flares_details_precluster_c123.xlsx"
     data = load_data(filename, interactive=True)
     data = nan_remover(data, remove_zeros=True)
     # data = only_within_area(data, survey_area_corners_lonlat=[58.5, 59.5])
