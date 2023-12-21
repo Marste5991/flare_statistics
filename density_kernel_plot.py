@@ -209,7 +209,7 @@ zoom_in = 1
 load_data_trigger = 1
 if load_data_trigger == 1:         
     #add triggers 
-    filename = r"F:\ESP3_OK\edited_flares\CAGE_20_1_flares_details_clustered\Results_flarelists_clusters\CAGE_20_1_flares_details_precluster_c123_Pingo_noNans.xlsx"
+    filename = r"F:\ESP3_OK\edited_flares\CAGE_20_1_flares_details_clustered\Results_flarelists_clusters\MASOX_JFflarescompiled_byMS_precluster_OK.xlsx"
     data = load_data(filename, interactive=True)
     #data = nan_remover(data, remove_zeros=True)
     # data = only_within_area(data, survey_area_corners_lonlat=[58.5, 59.5])
@@ -242,11 +242,11 @@ else:
 if zoom_in == 1:
     # zoom in on the data
     survey_area_corners_lonlat = [
-       [15.9, 76.13],  # Top-left corner
-    [16.15, 76.13],  # Top-right corner
-    [16.15, 76.08],  # Bottom-right corner
-    [15.9, 76.08],  # Bottom-left corner
-    [15.9, 76.13]   # Back to top-left to close the square
+       [9.3, 78.7],  # Top-left corner
+    [9.9, 78.7],  # Top-right corner
+    [9.9, 78.45],  # Bottom-right corner
+    [9.3, 78.45],  # Bottom-left corner
+    [9.3, 78.7]   # Back to top-left to close the square
     ]
     # position data
     data_pos = dict()
