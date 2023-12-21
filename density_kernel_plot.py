@@ -209,7 +209,7 @@ zoom_in = 1
 load_data_trigger = 1
 if load_data_trigger == 1:         
     #add triggers 
-    filename = r"F:\ESP3_OK\edited_flares\CAGE_20_1_flares_details_clustered\Results_flarelists_clusters\CAGE_20_1_flares_details_precluster_c123_Soerkapp_noNans.xlsx"
+    filename = r"F:\ESP3_OK\edited_flares\CAGE_20_1_flares_details_clustered\Results_flarelists_clusters\CAGE_20_1_flares_details_precluster_c123_Pingo_noNans.xlsx"
     data = load_data(filename, interactive=True)
     #data = nan_remover(data, remove_zeros=True)
     # data = only_within_area(data, survey_area_corners_lonlat=[58.5, 59.5])
@@ -224,7 +224,7 @@ if load_data_trigger == 1:
     dump(
         data,
         open(
-            r"F:\Quantitative_paper\kde_data.pkl",
+            r"F:\Quantitative_paper\kde_plots\kde_data.pkl",
             "wb",
         ),
     )
@@ -234,7 +234,7 @@ else:
 
     data = load(
         open(
-            r"F:\Quantitative_paper\kde_data.pkl",
+            r"F:\Quantitative_paper\kde_plots\kde_data.pkl",
             "rb",
         )
     )
@@ -242,11 +242,11 @@ else:
 if zoom_in == 1:
     # zoom in on the data
     survey_area_corners_lonlat = [
-       [14.2, 76.70],  # Top-left corner
-    [15.6, 76.70],  # Top-right corner
-    [15.6, 76.45],  # Bottom-right corner
-    [14.2, 76.45],  # Bottom-left corner
-    [14.2, 76.70]   # Back to top-left to close the square
+       [15.9, 76.13],  # Top-left corner
+    [16.15, 76.13],  # Top-right corner
+    [16.15, 76.08],  # Bottom-right corner
+    [15.9, 76.08],  # Bottom-left corner
+    [15.9, 76.13]   # Back to top-left to close the square
     ]
     # position data
     data_pos = dict()
@@ -382,22 +382,22 @@ else:
 # save the x,y,z data to a xlsx file
 df = pd.DataFrame(data=z)
 df.to_excel(
-    r"F:\Quantitative_paper\kde_data.xlsx",
+    r"F:\Quantitative_paper\kde_plots\kde_data.xlsx",
     index=False,
 )
 dfx = pd.DataFrame(data=x)
 dfx.to_excel(
-    r"F:\Quantitative_paper\kde_data_x.xlsx",
+    r"F:\Quantitative_paper\kde_plots\kde_data_x.xlsx",
     index=False,
 )
 dfy = pd.DataFrame(data=y)
 dfy.to_excel(
-    r"F:\Quantitative_paper\kde_data_y.xlsx",
+    r"F:\Quantitative_paper\kde_plots\kde_data_y.xlsx",
     index=False,
 )
 # save the figure
 plt.savefig(
-    r"F:\Quantitative_paper\kde_plot.png",
+    r"F:\Quantitative_paper\kde_plots\kde_plot.png",
     dpi=300,
     bbox_inches="tight",
 )
@@ -438,7 +438,7 @@ plt.xlim(0, 300)
 
 # plot a histogram
 plt.hist(data_mirrored, bins=2000, density=True)
-plt.xlim(0, 100)
+plt.xlim(0, 400)
 # plot legend
 plt.legend(["Kernel density estimate", "Histogram"])
 plt.ylabel("Probability density (kde)")
@@ -447,7 +447,7 @@ plt.show()
 
 # save the figure
 plt.savefig(
-    r"F:\Quantitative_paper\kde_histogram.png",
+    r"F:\Quantitative_paper\kde_plots\kde_histogram.png",
     dpi=300,
     bbox_inches="tight",
 )
