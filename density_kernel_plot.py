@@ -207,14 +207,16 @@ def plot_survey_area(
 # load the data if its not already a pickle file for it
 zoom_in = 1
 load_data_trigger = 1
-if load_data_trigger == 1:
-    filename = r"F:\ESP3_OK\edited_flares\CAGE_20_1_flow_rates_mat_n_xlsx_files\CAGE_20_1_flares_details_precluster_c123.xlsx"
+if load_data_trigger == 1:         
+    #add triggers 
+    filename = r"F:\ESP3_OK\edited_flares\CAGE_20_1_flares_details_clustered\Results_flarelists_clusters\CAGE_20_1_flares_details_precluster_25_75_c123_PKF_noNans.xlsx"
     data = load_data(filename, interactive=True)
-    data = nan_remover(data, remove_zeros=True)
+    #data = nan_remover(data, remove_zeros=True)
     # data = only_within_area(data, survey_area_corners_lonlat=[58.5, 59.5])
     # replace keys
     old_keys = list(data.keys())
-    new_keys = ["lon", "lat", "utmzone", "UTMx", "UTMy", "unknown", "flow"]
+    new_keys = ["name", "lat", "lon", "UTMx", "UTMy", "utmzone", "flow"]
+    # previously for 16_4: and , "unknown"
     data = replace_dict_keys(data, old_keys, new_keys, interactive=False)
     # save the data to a file that is easy to load using pickle
     from pickle import dump
@@ -222,7 +224,7 @@ if load_data_trigger == 1:
     dump(
         data,
         open(
-            r"C:\Users\kdo000\Dropbox\post_doc\Marie_project\data\kde_data\new_data\kde_data.pkl",
+            r"F:\Quantitative_paper\kde_data.pkl",
             "wb",
         ),
     )
@@ -232,7 +234,7 @@ else:
 
     data = load(
         open(
-            r"C:\Users\kdo000\Dropbox\post_doc\Marie_project\data\kde_data\new_data\kde_data.pkl",
+            r"F:\Quantitative_paper\kde_data.pkl",
             "rb",
         )
     )
@@ -240,10 +242,11 @@ else:
 if zoom_in == 1:
     # zoom in on the data
     survey_area_corners_lonlat = [
-        [9.267, 78.65],
-        [9.438, 78.661],
-        [9.703, 78.492],
-        [9.543, 78.481],
+       [10.075, 78.575],  # Top-left corner
+    [10.225, 78.575],  # Top-right corner
+    [10.225, 78.520],  # Bottom-right corner
+    [10.075, 78.520],  # Bottom-left corner
+    [10.075, 78.575]   # Back to top-left to close the square
     ]
     # position data
     data_pos = dict()
@@ -256,7 +259,7 @@ if zoom_in == 1:
         remove_idxs,
         survey_area_corners_lonlat,
         cmap_name="spring",
-        savefigure=r"C:\Users\kdo000\Dropbox\post_doc\Marie_project\results\kde_plots\new_kde_plots\survey_area_plot.png",
+        savefigure=r"F:\Quantitative_paper\kde_plots\survey_area_plot.png",
         show_plot=True,
     )
 
@@ -344,7 +347,7 @@ vmin, vmax = levels.min(), levels.max()
 norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
 mappable = mpl.cm.ScalarMappable(norm=norm, cmap=colormap_name)
 # Create the colorbar
-cb = plt.colorbar(mappable)
+cb = plt.colorbar(mappable, ax=ax)
 # Set the ticks and labels on the colorbar
 cb.set_ticks(np.linspace(vmin, vmax, 6))
 cb.set_ticklabels([f"{np.exp(i):.2e}" for i in np.linspace(vmin, vmax, 6)])
@@ -379,22 +382,22 @@ else:
 # save the x,y,z data to a xlsx file
 df = pd.DataFrame(data=z)
 df.to_excel(
-    r"C:\Users\kdo000\Dropbox\post_doc\Marie_project\data\kde_data\new_data\kde_data.xlsx",
+    r"F:\Quantitative_paper\kde_data.xlsx",
     index=False,
 )
 dfx = pd.DataFrame(data=x)
 dfx.to_excel(
-    r"C:\Users\kdo000\Dropbox\post_doc\Marie_project\data\kde_data\new_data\kde_data_x.xlsx",
+    r"F:\Quantitative_paper\kde_data_x.xlsx",
     index=False,
 )
 dfy = pd.DataFrame(data=y)
 dfy.to_excel(
-    r"C:\Users\kdo000\Dropbox\post_doc\Marie_project\data\kde_data\new_data\kde_data_y.xlsx",
+    r"F:\Quantitative_paper\kde_data_y.xlsx",
     index=False,
 )
 # save the figure
 plt.savefig(
-    r"C:\Users\kdo000\Dropbox\post_doc\Marie_project\results\kde_plots\new_kde_plots\kde_plot.png",
+    r"F:\Quantitative_paper\kde_plot.png",
     dpi=300,
     bbox_inches="tight",
 )
@@ -429,7 +432,7 @@ x, y = (
     .fit(data_mirrored)
     .evaluate(grid_points)
 )
-plt.plot(x, y)
+plt.plot(x, y, color='orange')
 plt.xlim(0, 300)
 # plot the bandwithd ona twinx axis
 
@@ -440,11 +443,11 @@ plt.xlim(0, 150)
 plt.legend(["Kernel density estimate", "Histogram"])
 plt.ylabel("Probability density (kde)")
 plt.xlabel("Flowrate per single seep")
-# plt.show()
+plt.show()
 
 # save the figure
 plt.savefig(
-    r"C:\Users\kdo000\Dropbox\post_doc\Marie_project\results\kde_plots\new_kde_plots\kde_histogram.png",
+    r"F:\Quantitative_paper\kde_histogram.png",
     dpi=300,
     bbox_inches="tight",
 )
