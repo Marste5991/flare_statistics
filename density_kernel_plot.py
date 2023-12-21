@@ -209,7 +209,7 @@ zoom_in = 1
 load_data_trigger = 1
 if load_data_trigger == 1:         
     #add triggers 
-    filename = r"F:\ESP3_OK\edited_flares\CAGE_20_1_flares_details_clustered\Results_flarelists_clusters\CAGE_20_1_flares_details_precluster_25_75_c123_PKF_noNans.xlsx"
+    filename = r"F:\ESP3_OK\edited_flares\CAGE_20_1_flares_details_clustered\Results_flarelists_clusters\CAGE_20_1_flares_details_precluster_c123_Soerkapp_noNans.xlsx"
     data = load_data(filename, interactive=True)
     #data = nan_remover(data, remove_zeros=True)
     # data = only_within_area(data, survey_area_corners_lonlat=[58.5, 59.5])
@@ -242,11 +242,11 @@ else:
 if zoom_in == 1:
     # zoom in on the data
     survey_area_corners_lonlat = [
-       [10.075, 78.575],  # Top-left corner
-    [10.225, 78.575],  # Top-right corner
-    [10.225, 78.520],  # Bottom-right corner
-    [10.075, 78.520],  # Bottom-left corner
-    [10.075, 78.575]   # Back to top-left to close the square
+       [14.2, 76.70],  # Top-left corner
+    [15.6, 76.70],  # Top-right corner
+    [15.6, 76.45],  # Bottom-right corner
+    [14.2, 76.45],  # Bottom-left corner
+    [14.2, 76.70]   # Back to top-left to close the square
     ]
     # position data
     data_pos = dict()
@@ -438,7 +438,7 @@ plt.xlim(0, 300)
 
 # plot a histogram
 plt.hist(data_mirrored, bins=2000, density=True)
-plt.xlim(0, 150)
+plt.xlim(0, 100)
 # plot legend
 plt.legend(["Kernel density estimate", "Histogram"])
 plt.ylabel("Probability density (kde)")
