@@ -5,6 +5,7 @@ author: @KnutOlaD
 
 import matplotlib.pyplot as plt
 from KDEpy import FFTKDE
+from scipy.stats import norm
 import numpy as np
 from KDEpy import TreeKDE
 import pandas as pd
@@ -12,6 +13,9 @@ import matplotlib as mpl
 import matplotlib.ticker as ticker
 import utm as utm
 import matplotlib.path as mpltPath
+import matplotlib.pyplot as plt
+
+from statsmodels.nonparametric.kernel_density import KDEMultivariate
 
 ###########################
 ####### FUNCTIONS #########
@@ -209,7 +213,7 @@ zoom_in = 1
 load_data_trigger = 1
 if load_data_trigger == 1:         
     #add triggers 
-    filename = r"F:\ESP3_OK\edited_flares\CAGE_21_6_flow_rates_mat_n_xlsx_files\cage_21_6_SB_SouthNorthEastSeepage_flow_rate.xlsx"
+    filename = r"F:\ESP3_OK\edited_flares\CAGE_20_1_flares_details_clustered\Results_flarelists_clusters\CAGE_20_1_flares_details_precluster_25_75_c123_PKF_noNans.xlsx"
     data = load_data(filename, interactive=True)
     #data = nan_remover(data, remove_zeros=True)
     # data = only_within_area(data, survey_area_corners_lonlat=[58.5, 59.5])
@@ -242,11 +246,11 @@ else:
 if zoom_in == 1:
     # zoom in on the data
     survey_area_corners_lonlat = [
-       [31.5, 75.24],  # Top-left corner
-    [32.4, 75.24],  # Top-right corner
-    [32.4, 75.14],  # Bottom-right corner
-    [31.5, 75.14],  # Bottom-left corner
-    [31.5, 75.24]   # Back to top-left to close the square
+      [10.075, 78.575],  # Top-left corner
+    [10.225, 78.575],  # Top-right corner
+    [10.225, 78.520],  # Bottom-right corner
+    [10.075, 78.520],  # Bottom-left corner
+    [10.075, 78.575]   # Back to top-left to close the square
     ]
     # position data
     data_pos = dict()
@@ -266,6 +270,8 @@ if zoom_in == 1:
     # remove all data points outside the survey area
     data = {key: data[key][remove_idxs] for key in data.keys()}
 
+
+"""
 ################
 ### PLOT KDE ###
 ################
@@ -277,7 +283,10 @@ weights = np.array(data["flow"])
 # fig = plt.figure(figsize=(18, 6))
 grid_points = 2**7  # Grid points in each dimension
 N = 26  # Number of contours
-bandwidth = 100  # Bandwidth for the KDE
+#bandwidth = 100  # Bandwidth for the KDE  #MS: Why 100 for a bandwidth here??
+###sigma = stats.variance(weights)
+###h = [R(K)/{aK4 SD(2(h))}Jll5n-1/5 
+
 
 ### PLOT SETTINGS ###
 colormap_name = "inferno"
@@ -291,11 +300,27 @@ plt.style.use("dark_background")
 # plt.style.use("default")
 
 ### COMPUTE KDE ###
-kde = TreeKDE(kernel="gaussian", bw=bandwidth, norm=2)
-grid, points = kde.fit(data_locs, weights).evaluate(grid_points)
+###kde = KDEMultivariate(data= weights, bw='cv_ml', var_type='c') --> MS
+
+###kde = FFTKDE(kernel='gaussian', bw='ISJ', norm=2)  --> MS: tried to use improved sheather-jones bandwidth but only works in 1D?! so not for map here
+kde = KDEMultivariate(data=weights.reshape(-1, 1), var_type='c', bw='cv_ml')
+
+##kde = TreeKDE(kernel="gaussian", bw=bandwidth, norm=2) #--> OJ code
+grid, points = kde.fit(data_locs, weights).evaluate(grid_points) #--> OJ
+# Evaluate the KDE at the grid points
+# Note: grid_points must be a 2D array where each row is a point
+###points = kde.pdf(weights) --> MS
+
 # The grid is of shape (obs, dims), points are of shape (obs, 1)
-x, y = np.unique(grid[:, 0]), np.unique(grid[:, 1])
-z = points.reshape(grid_points, grid_points).T
+###x, y = np.unique(grid_points[:, 0]), np.unique(grid_points[:, 1]) -->MS
+
+# Reshape points to have the same shape as the grid
+# Note: grid_points.shape[0] must be a perfect square
+###z = points.reshape(int(np.sqrt(grid_points.shape[0])), int(np.sqrt(grid_points.shape[0]))).T --> MS
+
+# The grid is of shape (obs, dims), points are of shape (obs, 1)
+x, y = np.unique(grid[:, 0]), np.unique(grid[:, 1]) #--> OJ
+z = points.reshape(grid_points, grid_points).T #--> OJ
 
 ### DEFINE LIMITS AND LEVELS ###
 vminlim = -20
@@ -305,7 +330,8 @@ levels = np.linspace(vminlim, vmaxlim, N)
 
 ### MAKE KDE PLOT ###
 fig, ax = plt.subplots()
-ax.set_title(f"Norm $p={2}$, bw = {bandwidth} , tree kde")
+##ax.set_title(f"Norm $p={2}$, bw = {bandwidth} , tree kde")
+ax.set_title(f"Norm $p={2}$, bw = ?, tree kde")
 if background_color:
     ax.set_facecolor(background_color)
 
@@ -403,6 +429,44 @@ plt.savefig(
 )
 
 plt.show()
+"""
+
+###############################
+# 2cnd attempt to plot 2D KDE: from statsmodels --> MS
+###############################
+
+### KDE SETTINGS ###
+# Create 2D data of shape (obs, dims)
+data_locs = np.array([data["UTMx"], data["UTMy"]]).T
+weights = np.array(data["flow"])
+
+# Kernel density estimation (statsmodels)
+kde = KDEMultivariate(data= weights.reshape(457, 2), bw='cv_ml', var_type='c') 
+# cross validation maximum likelihood bandwidth selection
+print('Bandwidth:', kde.bw)
+zi = kde.pdf()
+
+# Triangulation with refinement
+triang = tri.Triangulation(x, y)
+refiner = tri.UniformTriRefiner(triang)
+tri_refi, z_refi = refiner.refine_field(zi, subdiv=3)  # three levels of subdivisions
+
+# Graphical visualization
+fig, ax = plt.subplots(figsize=(7,7))
+ax.set_title('Bivariate Standardized Normal Distribution')
+ax.triplot(triang, color='white', lw=0.5)
+cax = ax.tricontourf(tri_refi, z_refi, 16, cmap=plt.cm.GnBu)
+ax.tricontour(tri_refi, z_refi, 16, colors=['0.25', '0.5', '0.5', '0.5'], 
+              linewidths=[1.0, 0.5, 1.0, 0.5])
+cbar = fig.colorbar(cax)
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+plt.tight_layout()
+plt.show()
+
+
+
+
 
 ###############################
 # KDE HISTOGRAM
@@ -413,32 +477,41 @@ plt.show()
 data_sorted = np.sort(data["flow"], axis=0)
 # make a mirrored array
 data_mirrored = np.concatenate((data_sorted, -data_sorted))
+
+# Create a KDE using the Sheather-Jones method (trying global bandwidths instead of initial local bandwidths)
+kde = KDEMultivariate(data_mirrored, bw='cv_ml', var_type='c')
+
+# Evaluate the KDE on a set of points
+x = np.linspace(0, 300, 5000)
+y = kde.pdf(x)
+
 # do a kernel density estimate of the mirrored data
 # Create 2D data of shape (obs, dims)
 # data_mirrored = np.array([data_mirrored, data_mirrored]).T.flatten()
 # the bandwidth to be a function of the flow rate
 # make a list of bandwidths
-bandwidths = []
-for i in range(len(data_mirrored)):
-    bandwidths.append(np.abs(data_mirrored[i]) * 0.1)
+##bandwidths = []
+##for i in range(len(data_mirrored)):
+    ##bandwidths.append(np.abs(data_mirrored[i]) * 0.1)
+# print("First 10 bandwidths:", bandwidths[:10])
 
 # KDE HISTOGRAM
 # determine the number of bins to be used
 # set resolution of the histogram
-grid_points = 5000  # Grid points in each dimension
+##grid_points = 5000  # Grid points in each dimension
 
-x, y = (
-    TreeKDE(kernel="epa", bw=bandwidths, norm=2)
-    .fit(data_mirrored)
-    .evaluate(grid_points)
-)
+##x, y = (
+##    TreeKDE(kernel="epa", bw=bandwidths, norm=2)
+##    .fit(data_mirrored)
+ ##   .evaluate(grid_points)
+##)
 plt.plot(x, y, color='orange')
 plt.xlim(0, 300)
 # plot the bandwithd ona twinx axis
 
 # plot a histogram
 plt.hist(data_mirrored, bins=2000, density=True)
-plt.xlim(0, 750)
+plt.xlim(0, 100)
 # plot legend
 plt.legend(["Kernel density estimate", "Histogram"])
 plt.ylabel("Probability density (kde)")
