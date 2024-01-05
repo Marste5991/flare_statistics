@@ -242,11 +242,32 @@ else:
 if zoom_in == 1:
     # zoom in on the data
     survey_area_corners_lonlat = [
-       [31.5, 75.24],  # Top-left corner
+       
+        [31.5, 75.24],  # Top-left corner FOR ZOOMED OUT NSE AREA
     [32.4, 75.24],  # Top-right corner
     [32.4, 75.14],  # Bottom-right corner
     [31.5, 75.14],  # Bottom-left corner
     [31.5, 75.24]   # Back to top-left to close the square
+       
+       #[32.09, 75.16],  # Top-left corner FOR E SEEPAGE
+    #[32.15, 75.16],  # Top-right corner
+    #[32.15, 75.14],  # Bottom-right corner
+    #[32.09, 75.14],  # Bottom-left corner
+    #[32.09, 75.16]   # Back to top-left to close the square
+    #]
+
+ #[31.57, 75.21],  # Top-left corner FOR S SEEPAGE
+    #[31.62, 75.21],  # Top-right corner
+    #[31.62, 75.206],  # Bottom-right corner
+    #[31.57, 75.206],  # Bottom-left corner
+    #[31.57, 75.21]   # Back to top-left to close the square
+    
+
+#[31.7, 75.24],  # Top-left corner FOR N SEEPAGE
+   # [31.8, 75.24],  # Top-right corner
+   # [31.8, 75.22],  # Bottom-right corner
+    #[31.7, 75.22],  # Bottom-left corner
+    #[31.7, 75.24]
     ]
     # position data
     data_pos = dict()
@@ -277,7 +298,7 @@ weights = np.array(data["flow"])
 # fig = plt.figure(figsize=(18, 6))
 grid_points = 2**7  # Grid points in each dimension
 N = 26  # Number of contours
-bandwidth = 100  # Bandwidth for the KDE
+bandwidth = 10  # Bandwidth for the KDE
 
 ### PLOT SETTINGS ###
 colormap_name = "inferno"
