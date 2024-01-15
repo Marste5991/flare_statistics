@@ -242,11 +242,18 @@ else:
 if zoom_in == 1:
     # zoom in on the data
     survey_area_corners_lonlat = [
-       [14.2, 76.70],  # Top-left corner
-    [15.6, 76.70],  # Top-right corner
-    [15.6, 76.45],  # Bottom-right corner
-    [14.2, 76.45],  # Bottom-left corner
-    [14.2, 76.70]   # Back to top-left to close the square
+      # [14.2, 76.70],  # Top-left corner
+    #[15.6, 76.70],  # Top-right corner
+    #[15.6, 76.45],  # Bottom-right corner
+    #[14.2, 76.45],  # Bottom-left corner
+    #[14.2, 76.70]   # Back to top-left to close the square
+        
+         [14.65, 76.60],  # Top-left corner
+    [15.00, 76.60],  # Top-right corner
+    [15.00, 76.54],  # Bottom-right corner
+    [14.65, 76.54],  # Bottom-left corner
+    [14.65, 76.60]   # Back to top-left to close the square
+
     ]
     # position data
     data_pos = dict()
@@ -277,7 +284,7 @@ weights = np.array(data["flow"])
 # fig = plt.figure(figsize=(18, 6))
 grid_points = 2**7  # Grid points in each dimension
 N = 26  # Number of contours
-bandwidth = 100  # Bandwidth for the KDE
+bandwidth = 175  # Bandwidth for the KDE
 
 ### PLOT SETTINGS ###
 colormap_name = "inferno"
