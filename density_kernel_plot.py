@@ -209,7 +209,8 @@ zoom_in = 1
 load_data_trigger = 1
 if load_data_trigger == 1:         
     #add triggers 
-    filename = r"F:\ESP3_OK\edited_flares\CAGE_20_1_flares_details_clustered\Results_flarelists_clusters\MASOX_JFflarescompiled_byMS_precluster_OK.xlsx"
+    filename = r"F:\Quantitative_paper\Flares_CAGE_16_4\CAGE_16_4_Merged_Manuel_modifiedby_MS_for_clustering_c123_forKDEplot.xlsx"
+    #filename = r"F:\ESP3_OK\edited_flares\CAGE_20_1_flares_details_clustered\Results_flarelists_clusters\MASOX_JFflarescompiled_byMS_precluster_OK.xlsx"
     data = load_data(filename, interactive=True)
     #data = nan_remover(data, remove_zeros=True)
     # data = only_within_area(data, survey_area_corners_lonlat=[58.5, 59.5])
@@ -277,7 +278,7 @@ weights = np.array(data["flow"])
 # fig = plt.figure(figsize=(18, 6))
 grid_points = 2**7  # Grid points in each dimension
 N = 26  # Number of contours
-bandwidth = 100  # Bandwidth for the KDE
+bandwidth = 150  # Bandwidth for the KDE
 
 ### PLOT SETTINGS ###
 colormap_name = "inferno"
